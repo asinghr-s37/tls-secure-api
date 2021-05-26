@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="d3fe3bd4-f620-4726-b1b0-8d0f85a38e85" >
+		<tls:key-store type="jks" path="rtf-api.jks" alias="rtf-api" keyPassword="keypass" password="kspass" />
+	</tls:context>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4519e8b1-baae-4772-ac5c-1ef1f001730d" >
+		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="${https.port}" tlsContext="TLS_Context" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="4f4ef94b-1733-47f5-bcda-03bdf3cffc57" file="config-dev.properties" />
+	<flow name="tls-secured-apiFlow" doc:id="5e59af62-477e-41ff-a3ee-ff6591544e56" >
+		<http:listener doc:name="Listener" doc:id="b2fc7024-24b4-4a03-8f95-174558d202f6" config-ref="HTTP_Listener_config" path="/api/secured"/>
+		<ee:transform doc:name="Transform Message" doc:id="bb161f78-674a-420e-adea-9f276a43174b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"api-name": app.name,
+	"message": "This is secured using TLS",
+	"time": now()
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
