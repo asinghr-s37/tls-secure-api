@@ -15,5 +15,3 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      - run: echo "Githun RUn ID: ${{GITHUB_RUN_ID}}"
-      - run: echo "Githun Run Number: ${{GITHUB_RUN_NUMBER}}"
